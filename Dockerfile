@@ -5,18 +5,15 @@ WORKDIR /app
 # Copy the original server code
 COPY . .
 
-# Install dependencies for the original server
+# Install dependencies for the server
 RUN pip install -e .
 
-# Install FastMCP for proxy functionality
-RUN pip install fastmcp
-
 # Set environment for HTTP transport
-ENV MCP_TRANSPORT=http
+ENV MCP_TRANSPORT=streamable-http
 ENV PORT=8080
 
 # Expose port
 EXPOSE 8080
 
-# Run the FastMCP proxy
-CMD ["python", "/app/fastmcp-wrapper/proxy_server.py"]
+# Run the server directly with streamable-http transport
+CMD ["python", "-m", "mcp_server.main", "streamable-http"]
