@@ -1,0 +1,48 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: starry-academy-469523-q0
+  SERVICE_NAME: mcp-amazon-neptune
+  REGION: us-central1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        
+    - name: Configure Docker for Google Artifact Registry
+      run: gcloud auth configure-docker
+      
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy ${{ env.SERVICE_NAME }} \
+          --source . \
+          --region ${{ env.REGION }} \
+          --project ${{ env.PROJECT_ID }} \
+          --port 8080 \
+          --memory 512Mi \
+          --cpu 1 \
+          --timeout 300 \
+          --update-secrets="CLOUD_RUN_API_KEY=CLOUD_RUN_API_KEY:latest" \
+          --allow-unauthenticated \
+          --quiet
