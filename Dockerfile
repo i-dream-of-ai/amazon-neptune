@@ -15,5 +15,8 @@ ENV PORT=8080
 # Expose port
 EXPOSE 8080
 
-# Run the server directly with streamable-http transport
-CMD ["python", "-m", "mcp_server.main", "streamable-http"]
+# Install FastMCP for proxy functionality
+RUN pip install fastmcp
+
+# Run the FastMCP proxy
+CMD ["python", "/app/fastmcp-wrapper/proxy_server.py"]

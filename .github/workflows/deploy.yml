@@ -43,6 +43,5 @@ jobs:
           --memory 512Mi \
           --cpu 1 \
           --timeout 300 \
-          --update-secrets="CLOUD_RUN_API_KEY=CLOUD_RUN_API_KEY:latest" \
-          --allow-unauthenticated \
+          --no-allow-unauthenticated \
           --quiet
